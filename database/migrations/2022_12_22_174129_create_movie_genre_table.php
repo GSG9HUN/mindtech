@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+        Schema::create('movie_genre', function (Blueprint $table) {
+            $table->foreignId('movie_id')->references('tmdb_id')->on('movie');
+            $table->foreignId('genre_id')->references('id')->on('genre');
+            $table->primary(['movie_id','genre_id']);
         });
     }
 
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('movie_genre');
     }
 };

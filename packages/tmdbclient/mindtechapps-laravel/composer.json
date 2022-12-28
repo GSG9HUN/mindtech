@@ -1,0 +1,25 @@
+{
+    "name": "tmdbclient/mindtechapps-laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Olah Sandor",
+            "email": "olahsandorlajos99@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "TMDBClient\\MindTechApps\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TMDBClient\\MindTechApps\\TMDBClientServiceProvider"
+            ]
+        }
+    }
+}
