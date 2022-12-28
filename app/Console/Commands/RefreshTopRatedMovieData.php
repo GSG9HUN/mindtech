@@ -1,24 +1,44 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Console\Commands;
 
 use App\Repository\DirectorMovieRepository;
 use App\Repository\DirectorRepository;
 use App\Repository\GenreRepository;
 use App\Repository\MovieGenreRepository;
 use App\Repository\MovieRepository;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Console\Command;
 use TMDBClient\MindTechApps\TMDBClient;
 
-class TMDBClientController extends Controller
+class RefreshTopRatedMovieData extends Command
 {
-    public function index(GenreRepository $genreRepository, MovieRepository $movieRepository, MovieGenreRepository $movieGenreRepository, DirectorRepository $directorRepository, DirectorMovieRepository $directorMovieRepository)
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'tmdb:refresh';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Refresh Top Rated Movies Data from TMDB.';
+
+    /**
+     * Execute the console command.
+     *
+     * @param GenreRepository $genreRepository
+     * @param MovieRepository $movieRepository
+     * @param MovieGenreRepository $movieGenreRepository
+     * @param DirectorRepository $directorRepository
+     * @param DirectorMovieRepository $directorMovieRepository
+     * @return int
+     */
+    public function handle(GenreRepository $genreRepository, MovieRepository $movieRepository, MovieGenreRepository $movieGenreRepository, DirectorRepository $directorRepository, DirectorMovieRepository $directorMovieRepository): string
     {
         $tmdbClient = new TMDBClient();
-
-        //egy event
 
         $movieGenreRepository->deleteAll();
         $directorMovieRepository->deleteAll();
@@ -26,12 +46,8 @@ class TMDBClientController extends Controller
         $genreRepository->deleteAll();
         $movieRepository->deleteAll();
 
-
-// másik event
-
         $genres = $tmdbClient->getGenres();
         $genreRepository->saveAll($genres);
-
 
         $movies = $tmdbClient->getTopRatedMovies();
 
@@ -47,10 +63,9 @@ class TMDBClientController extends Controller
                     continue;
                 }
                 $directorRepository->create($details);
-
                 $directorMovieRepository->create($movie->id, $details->id);
             }
         }
-
+        return Command::SUCCESS;
     }
 }
